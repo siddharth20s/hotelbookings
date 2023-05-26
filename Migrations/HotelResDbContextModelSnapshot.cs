@@ -22,7 +22,7 @@ namespace pracapiapp.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("pracapiapp.Models.Customer", b =>
+            modelBuilder.Entity("ClassLibrary1.Models.Customer", b =>
                 {
                     b.Property<int>("CustomerId")
                         .ValueGeneratedOnAdd()
@@ -51,7 +51,7 @@ namespace pracapiapp.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("pracapiapp.Models.Employee", b =>
+            modelBuilder.Entity("ClassLibrary1.Models.Employee", b =>
                 {
                     b.Property<int?>("EmployeeId")
                         .ValueGeneratedOnAdd()
@@ -80,60 +80,104 @@ namespace pracapiapp.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("pracapiapp.Models.Hotel", b =>
+            modelBuilder.Entity("ClassLibrary1.Models.Hotel", b =>
                 {
-                    b.Property<int>("HotelId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HotelId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("Phone")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("HotelId");
+                    b.Property<int>("Ratings")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Hotels");
                 });
 
-            modelBuilder.Entity("pracapiapp.Models.Room", b =>
+            modelBuilder.Entity("ClassLibrary1.Models.Room", b =>
                 {
-                    b.Property<int?>("RoomId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("RoomId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("Capacity")
-                        .HasColumnType("int");
+                    b.Property<string>("Availability")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("HotelId")
                         .HasColumnType("int");
 
-                    b.Property<string>("RoomNumber")
+                    b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("PricePerNight")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("RoomId");
+                    b.HasKey("Id");
 
                     b.HasIndex("HotelId");
 
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("pracapiapp.Models.Customer", b =>
+            modelBuilder.Entity("pracapiapp.DTO.RoomCountDTO", b =>
                 {
-                    b.HasOne("pracapiapp.Models.Hotel", "Hotel")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Ratings")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalAvailableRooms")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RoomCountDTO");
+                });
+
+            modelBuilder.Entity("ClassLibrary1.Models.Customer", b =>
+                {
+                    b.HasOne("ClassLibrary1.Models.Hotel", "Hotel")
                         .WithMany("Customers")
                         .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -142,9 +186,9 @@ namespace pracapiapp.Migrations
                     b.Navigation("Hotel");
                 });
 
-            modelBuilder.Entity("pracapiapp.Models.Employee", b =>
+            modelBuilder.Entity("ClassLibrary1.Models.Employee", b =>
                 {
-                    b.HasOne("pracapiapp.Models.Hotel", "Hotel")
+                    b.HasOne("ClassLibrary1.Models.Hotel", "Hotel")
                         .WithMany("Employees")
                         .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -153,9 +197,9 @@ namespace pracapiapp.Migrations
                     b.Navigation("Hotel");
                 });
 
-            modelBuilder.Entity("pracapiapp.Models.Room", b =>
+            modelBuilder.Entity("ClassLibrary1.Models.Room", b =>
                 {
-                    b.HasOne("pracapiapp.Models.Hotel", "Hotel")
+                    b.HasOne("ClassLibrary1.Models.Hotel", "Hotel")
                         .WithMany("Rooms")
                         .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -164,7 +208,7 @@ namespace pracapiapp.Migrations
                     b.Navigation("Hotel");
                 });
 
-            modelBuilder.Entity("pracapiapp.Models.Hotel", b =>
+            modelBuilder.Entity("ClassLibrary1.Models.Hotel", b =>
                 {
                     b.Navigation("Customers");
 

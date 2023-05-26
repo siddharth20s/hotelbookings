@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ClassLibrary1.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using pracapiapp.Models;
 using pracapiapp.Repositories;
 
 namespace pracapiapp.Controllers
@@ -58,7 +58,7 @@ namespace pracapiapp.Controllers
                     return BadRequest();
                 }
                 var addedHotel = await _hotelRepo.PostHotelsAsync(hotel);
-                return CreatedAtAction(nameof(GetHotelById), new { id = addedHotel.HotelId }, addedHotel);
+                return CreatedAtAction(nameof(GetHotelById), new { id = addedHotel.Id }, addedHotel);
             }
             catch (Exception ex)
             {
@@ -71,7 +71,7 @@ namespace pracapiapp.Controllers
         {
             try
             {
-                if (hotel == null || hotel.HotelId != id)
+                if (hotel == null || hotel.Id != id)
                 {
                     return BadRequest();
                 }

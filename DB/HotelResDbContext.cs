@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using pracapiapp.Models;
+﻿using ClassLibrary1.Models;
+using Microsoft.EntityFrameworkCore;
+using pracapiapp.DTO;
 
 namespace pracapiapp.DB
 {
@@ -9,7 +10,9 @@ namespace pracapiapp.DB
         public DbSet<Room>? Rooms { get; set; }
         public DbSet<Employee>? Employees { get; set; }
         public DbSet<Customer>? Customers { get; set; }
+        public DbSet<RoomCountDTO>? RoomCountDTO { get; set; }
 
+        
         public HotelResDbContext(DbContextOptions<HotelResDbContext> options) : base(options) { }
 
 

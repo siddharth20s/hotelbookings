@@ -20,6 +20,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(Options =>
 builder.Services.AddDbContext<HotelResDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
 var app = builder.Build();
 

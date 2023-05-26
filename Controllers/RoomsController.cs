@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ClassLibrary1.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using pracapiapp.DB;
-using pracapiapp.Models;
+using pracapiapp.DTO;
+using pracapiapp.Repositories;
 
 namespace pracapiapp.Controllers
 {
@@ -14,111 +16,124 @@ namespace pracapiapp.Controllers
     [ApiController]
     public class RoomsController : ControllerBase
     {
-        private readonly HotelResDbContext _context;
+        private readonly IRoomRepository _roomRepository;
 
-        public RoomsController(HotelResDbContext context)
+        public RoomsController(IRoomRepository roomRepository)
         {
-            _context = context;
+            _roomRepository = roomRepository;
         }
 
-        // GET: api/Rooms
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
-          if (_context.Rooms == null)
-          {
-              return NotFound();
-          }
-            return await _context.Rooms.ToListAsync();
-        }
-
-        // GET: api/Rooms/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Room>> GetRoom(int? id)
-        {
-          if (_context.Rooms == null)
-          {
-              return NotFound();
-          }
-            var room = await _context.Rooms.FindAsync(id);
-
-            if (room == null)
-            {
-                return NotFound();
-            }
-
-            return room;
-        }
-
-        // PUT: api/Rooms/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRoom(int? id, Room room)
-        {
-            if (id != room.RoomId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(room).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                return await _roomRepository.GetRooms();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!RoomExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest("Failed to get rooms. Error message: " + ex.Message);
             }
-
-            return NoContent();
         }
 
-        // POST: api/Rooms
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Room>> GetRoom(int id)
+        {
+            try
+            {
+
+                var room = await _roomRepository.GetRoom(id);
+
+
+                return room;
+
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to get room with ID " + id + ". Error message: " + ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutRoom(int id, Room room)
+        {
+            try
+            {
+                var result = await _roomRepository.PutRoom(id, room);
+                if (result == null)
+                {
+                    return NotFound("Room not found with ID " + id);
+                }
+                return Ok("Room with ID " + id + " has been updated successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to update room with ID " + id + ". Error message: " + ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<Room>> PostRoom(Room room)
         {
-          if (_context.Rooms == null)
-          {
-              return Problem("Entity set 'HotelResDbContext.Rooms'  is null.");
-          }
-            _context.Rooms.Add(room);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetRoom", new { id = room.RoomId }, room);
+            try
+            {
+                var result = await _roomRepository.PostRoom(room);
+                if (result == null)
+                {
+                    return BadRequest("Failed to create new room");
+                }
+                return Ok("New room has been created successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to create new room. Error message: " + ex.Message);
+            }
         }
 
-        // DELETE: api/Rooms/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRoom(int? id)
+        public async Task<IActionResult> DeleteRoom(int id)
         {
-            if (_context.Rooms == null)
+            try
             {
-                return NotFound();
+                var result = await _roomRepository.DeleteRoom(id);
+                if (result == null)
+                {
+                    return NotFound("Room not found with ID " + id);
+                }
+                return Ok("Room with ID " + id + " has been deleted successfully");
             }
-            var room = await _context.Rooms.FindAsync(id);
-            if (room == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest("Failed to delete room with ID " + id + ". Error message: " + ex.Message);
             }
-
-            _context.Rooms.Remove(room);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
-        private bool RoomExists(int? id)
+        [HttpGet("hotels/available-rooms")]
+        public async Task<ActionResult<IEnumerable<AvailableRoomsDTO>>> GetHotelsWithAvailableRooms(string availability)
         {
-            return (_context.Rooms?.Any(e => e.RoomId == id)).GetValueOrDefault();
+            try
+            {
+                return await _roomRepository.GetHotelsWithAvailableRooms(availability);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to get hotels with available rooms. Error message: " + ex.Message);
+            }
         }
+
+        [HttpGet("hotels/rooms-count")]
+        public async Task<ActionResult<IEnumerable<RoomCountDTO>>> GetHotelsWithRoomsCount(string availability)
+        {
+            try
+            {
+                return await _roomRepository.GetHotelsWithRoomsCount(availability);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Failed to get hotels with room counts. Error message: " + ex.Message);
+            }
+        }
+
     }
 }

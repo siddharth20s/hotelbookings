@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ClassLibrary1.Models;
+using Microsoft.EntityFrameworkCore;
 using pracapiapp.DB;
-using pracapiapp.Models;
 
 namespace pracapiapp.Repositories
 {
@@ -17,7 +17,7 @@ namespace pracapiapp.Repositories
         {
             try
             {
-                Hotel del = await projectcontext.Hotels.FirstOrDefaultAsync(x => x.HotelId == id);
+                Hotel del = await projectcontext.Hotels.FirstOrDefaultAsync(x => x.Id == id);
                 projectcontext.Hotels.Remove(del);
                 await projectcontext.SaveChangesAsync();
                 return del;
@@ -49,7 +49,7 @@ namespace pracapiapp.Repositories
                 return await projectcontext.Hotels.Include(x => x.Rooms)
                                                   .Include(x => x.Employees)
                                                   .Include(x => x.Customers)
-                                                  .FirstOrDefaultAsync(x => x.HotelId == id);
+                                                  .FirstOrDefaultAsync(x => x.Id == id);
             }
             catch (Exception ex)
             {

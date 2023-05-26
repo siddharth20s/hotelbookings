@@ -1,4 +1,4 @@
-﻿using pracapiapp.Models;
+﻿using ClassLibrary1.Models;
 
 namespace pracapiapp.Repositories
 {
